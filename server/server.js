@@ -1,19 +1,20 @@
 const mysql2 = require('mysql2')
+const express = require('express')
 require('dotenv').config();
 
-const dbHost = process.env.DB_HOST;
-const dbPort = process.env.DB_PORT;
-const dbName = process.env.DB_NAME;
-const dbUser = process.env.DB_ROOT;
-const dbPassword = process.env.DB_PW
+// Set up express to create an app and configure it to parse requests with JSON payloads
+const app = express()
+app.use(express.json())
+
+const PORT = process.env.PORT || 3000
 
 // configurations for creating mysql connection
 const connection = mysql2.createConnection({
-    host: dbHost,
-    port: dbPort,
-    database: dbName,
-    user: dbUser,
-    password: dbPassword
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user: process.env.DB_ROOT,
+    password: process.env.DB_PW
 })
 
 // executing connection
@@ -23,4 +24,16 @@ connection.connect(function (err) {
     } else {
         console.log("connection created with mysql successfully")
     }
+})
+
+app.listen(PORT, () => {
+    console.log("Server listening on PORT:", PORT)
+})
+
+app.get("/status", (request, response) => {
+    const status = {
+        "Status": "Running"
+    };
+
+    response.send(status);
 })
